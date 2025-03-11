@@ -1,0 +1,260 @@
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base Styles */
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #faf8f2; /* light tan */
+  color: #333;
+}
+
+/* Header */
+header {
+  background: #f2e6d9; /* tan header */
+  border-bottom: 1px solid #d9c9b6;
+}
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo a {
+  text-decoration: none;
+  font-size: 24px;
+  font-weight: 600;
+  color: #5f4b32; /* dark brown */
+}
+nav ul {
+  list-style: none;
+  display: flex;
+}
+nav ul li {
+  margin-left: 20px;
+}
+nav ul li a {
+  text-decoration: none;
+  color: #5f4b32;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+nav ul li a:hover {
+  color: #8c6b4c;
+}
+
+/* Hero Section */
+.hero {
+  background: #f8f4ec; /* cream */
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 1px solid #e3dcd0;
+}
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: #5f4b32;
+}
+.hero p {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #6f5c43;
+}
+.hero .search-bar {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.hero .search-bar input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #cbbba5;
+  border-radius: 4px;
+  outline: none;
+}
+
+/* Content Layout */
+.content-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+/* Categories Navigation - Sticky & Horizontal */
+.categories-nav {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1000;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #d9c9b6;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.categories-nav h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #5f4b32;
+}
+.categories-nav ul {
+  display: flex;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.categories-nav ul li {
+  display: inline-block;
+  padding: 8px 12px;
+  border: 1px solid #d9c9b6;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #5f4b32;
+  font-weight: 600;
+  background: #f8f4ec;
+  white-space: nowrap;
+}
+.categories-nav ul li:hover {
+  background: #dfd2c3;
+}
+.categories-nav ul li.active {
+  background: #8c6b4c;
+  color: #fff;
+  border-color: #8c6b4c;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+}
+
+/* Category Section */
+.category-section {
+  margin-bottom: 40px;
+}
+.category-header {
+  font-size: 20px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #5f4b32;
+  border-bottom: 1px solid #d9c9b6;
+  padding-bottom: 5px;
+}
+
+/* Carousel Container (Responsive for 7 cards)
+   We allow the container to shrink if the screen is too narrow,
+   and horizontally scroll. */
+.carousel-container {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;          /* Fill available width */
+  max-width: 1040px;    /* 7 cards * 140 + 6 gaps * 10 = 1040px */
+  padding: 0 50px 30px;
+  overflow-x: auto;     /* Horizontal scroll if narrower than 1040px */
+}
+
+/* Shelf effect (optional) */
+.carousel-container::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: #8c6b4c;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+  z-index: -1;
+}
+
+/* Carousel Wrapper */
+.carousel-wrapper {
+  width: 100%;
+  overflow: hidden;
+  padding: 10px 0;
+}
+
+/* Carousel Row */
+.carousel {
+  display: flex;
+  gap: 17px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overflow: hidden;
+}
+
+/* Carousel Arrow Buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #8c6b4c;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s;
+}
+.carousel-btn.left {
+  left: 10px;
+}
+.carousel-btn.right {
+  right: 10px;
+}
+.carousel-btn:hover {
+  color: #5f4b32;
+}
+
+/* Book Card */
+.book-card {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 140px;
+  background: transparent;
+  border: none;
+  overflow: hidden;
+}
+.cover-container {
+  width: 100%;
+  height: 210px;
+  overflow: hidden;
+  background: transparent;
+}
+.cover-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+.cover-container img:hover {
+  transform: scale(1.05);
+}
+.preview-btn {
+  margin: 10px;
+  padding: 8px 0;
+  background-color: transparent;  /* No background */
+  color: #5f4b32;
+  border: 1px solid #5f4b32;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+  text-align: center;
+}
+.preview-btn:hover {
+  background-color: #f8f4ec;
+  color: #333;
+}

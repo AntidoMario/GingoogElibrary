@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gingoog CityLibrary - Browse</title>
+  <!-- Google Fonts for a modern look -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <a href="#">Gingoog CityLibrary</a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#">My Books</a></li>
+          <li><a href="#">Help</a></li>
+          <li><a href="#">Sign In</a></li>
+          <li><a href="#">Log In</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <!-- Hero / Banner -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to Gingoog City eLibrary</h1>
+      <p>Explore thousands of free books. Search by title, author, ISBN, and more.</p>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search for books...">
+      </div>
+    </div>
+  </section>
+  
+  <!-- Main Content -->
+  <div class="content-container">
+    <section class="main-content">
+      <!-- Sticky, horizontally scrollable Category Navigation -->
+      <div class="categories-nav">
+        <h2>Browse Categories</h2>
+        <ul id="categoryList">
+          <li class="active" data-category="All">All</li>
+          <li data-category="Classic">Classic</li>
+          <li data-category="Loved">Books We Love</li>
+          <li data-category="Trending">Trending</li>
+          <li data-category="Education">Education</li>
+          <li data-category="Romance">Romance</li>
+          <li data-category="Horror">Horror</li>
+          <li data-category="Adventure">Adventure</li>
+          <li data-category="Dystopian">Dystopian</li>
+          <li data-category="Self-Help">Self-Help</li>
+          <li data-category="Historical">Historical</li>
+          <li data-category="Philosophical">Philosophical</li>
+          <li data-category="War">War</li>
+          <li data-category="Drama">Drama</li>
+          <li data-category="Religious">Religious</li>
+          <li data-category="Realism">Realism</li>
+          <li data-category="Tragedy">Tragedy</li>
+          <li data-category="Psychological">Gothic</li>
+        </ul>
+      </div>
+      
+      <!-- Container for Carousel Sections -->
+      <div id="categoriesContainer"></div>
+    </section>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
