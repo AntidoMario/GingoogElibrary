@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Description</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="stylesDesc.css">
+</head>
+<body>
+  <!-- Header with Back to Library -->
+  <header class="detail-header">
+    <div class="detail-header-content">
+      <h1>Book Details</h1>
+      <a href="index.html" class="back-link-header">&larr; Back to Library</a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="book-detail-container">
+    <!-- LEFT COLUMN: Book Cover -->
+    <div class="left-column">
+      <img id="bookCover" class="book-cover" src="" alt="Book Cover">
+    </div>
+
+    <!-- RIGHT COLUMN: Book Metadata & Description -->
+    <div class="right-column">
+      <h2 id="bookTitle" class="book-title">Title</h2>
+      <p id="bookAuthor" class="book-author">By Author</p>
+
+      <!-- Optional subtitle / edition text -->
+      <p id="bookSubtitle" class="book-subtitle">1st ed.</p>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <a href="#" class="action-btn" id="previewButton">Preview Only</a>
+        <a href="#" class="action-btn" id="borrowButton">Borrow</a>
+        <a href="#" class="action-btn" id="readButton">Read</a>
+      </div>
+
+      <!-- Book Stats -->
+      <div class="book-stats">
+        <div>
+          <label>Subjects:</label>
+          <span id="subjects">N/A</span>
+        </div>
+        <div>
+          <label>Pages:</label>
+          <span id="pageCountDisplay">N/A</span>
+        </div>
+        <div>
+          <label>Language:</label>
+          <span id="language">English</span>
+        </div>
+      </div>
+
+      <!-- Description Area -->
+      <div id="bookDescription" class="book-description">
+        <strong>Description:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </div>
+
+      <!-- Additional Info -->
+      <div class="additional-info">
+        <p><strong>Published:</strong> <span id="publishedDate">Unknown</span></p>
+        <p><strong>ISBN:</strong> <span id="isbn">N/A</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="scriptDesc.js"></script>
+</body>
+</html>

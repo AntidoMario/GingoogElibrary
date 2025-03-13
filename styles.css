@@ -29,7 +29,7 @@ header {
   text-decoration: none;
   font-size: 24px;
   font-weight: 600;
-  color: #5f4b32; /* dark brown */
+  color: #5f4b32;
 }
 nav ul {
   list-style: none;
@@ -65,16 +65,94 @@ nav ul li a:hover {
   margin-bottom: 20px;
   color: #6f5c43;
 }
-.hero .search-bar {
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+
+/* Filters Section (Sticky) */
+.filters-section {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1000;
+  padding: 10px;
+  border-bottom: 1px solid #d9c9b6;
 }
-.hero .search-bar input {
+.filters {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+.filter {
+  display: flex;
+  flex-direction: column;
+}
+.filter label {
+  font-size: 14px;
+  color: #5f4b32;
+  margin-bottom: 4px;
+}
+
+/* Custom Dropdown */
+.dropdown {
+  position: relative;
+  width: 200px;
+}
+.dropdown-input {
   width: 100%;
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid #cbbba5;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #d9c9b6;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #fff;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #d9c9b6;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+  display: none;
+  z-index: 10;
+}
+.dropdown.open .dropdown-menu {
+  display: block;
+}
+.dropdown-search {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 14px;
+  border: none;
+  border-bottom: 1px solid #d9c9b6;
+  outline: none;
+}
+.dropdown-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.dropdown-options li {
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.dropdown-options li:hover {
+  background: #dfd2c3;
+}
+.global-search {
+  flex: 1;
+  min-width: 200px;
+}
+.global-search input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #d9c9b6;
   border-radius: 4px;
   outline: none;
 }
@@ -84,57 +162,6 @@ nav ul li a:hover {
   max-width: 1200px;
   margin: 20px auto;
   padding: 0 20px;
-}
-
-/* Categories Navigation - Sticky & Horizontal */
-.categories-nav {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 1000;
-  margin-bottom: 20px;
-  padding: 10px;
-  border: 1px solid #d9c9b6;
-  border-radius: 4px;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-.categories-nav h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #5f4b32;
-}
-.categories-nav ul {
-  display: flex;
-  gap: 10px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.categories-nav ul li {
-  display: inline-block;
-  padding: 8px 12px;
-  border: 1px solid #d9c9b6;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-  color: #5f4b32;
-  font-weight: 600;
-  background: #f8f4ec;
-  white-space: nowrap;
-}
-.categories-nav ul li:hover {
-  background: #dfd2c3;
-}
-.categories-nav ul li.active {
-  background: #8c6b4c;
-  color: #fff;
-  border-color: #8c6b4c;
-}
-
-/* Main Content */
-.main-content {
-  flex: 1;
 }
 
 /* Category Section */
@@ -151,19 +178,15 @@ nav ul li a:hover {
   padding-bottom: 5px;
 }
 
-/* Carousel Container (Responsive for 7 cards)
-   We allow the container to shrink if the screen is too narrow,
-   and horizontally scroll. */
+/* Carousel Container (Responsive for 7 cards) */
 .carousel-container {
   position: relative;
   margin: 0 auto;
-  width: 100%;          /* Fill available width */
-  max-width: 1040px;    /* 7 cards * 140 + 6 gaps * 10 = 1040px */
+  width: 100%;
+  max-width: 1040px; /* 7 cards * 140 + 6 gaps * 10 = 1040px */
   padding: 0 50px 30px;
-  overflow-x: auto;     /* Horizontal scroll if narrower than 1040px */
+  overflow-x: auto;
 }
-
-/* Shelf effect (optional) */
 .carousel-container::after {
   content: "";
   position: absolute;
@@ -172,7 +195,7 @@ nav ul li a:hover {
   width: 100%;
   height: 20px;
   background: #8c6b4c;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
   z-index: -1;
 }
 
@@ -230,6 +253,7 @@ nav ul li a:hover {
   height: 210px;
   overflow: hidden;
   background: transparent;
+  position: relative;
 }
 .cover-container img {
   width: 100%;
@@ -242,10 +266,12 @@ nav ul li a:hover {
 .cover-container img:hover {
   transform: scale(1.05);
 }
+
+/* Read Button */
 .preview-btn {
   margin: 10px;
   padding: 8px 0;
-  background-color: transparent;  /* No background */
+  background-color: transparent;
   color: #5f4b32;
   border: 1px solid #5f4b32;
   border-radius: 4px;

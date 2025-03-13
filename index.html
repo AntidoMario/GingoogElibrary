@@ -30,7 +30,44 @@
     <div class="hero-content">
       <h1>Welcome to Gingoog City eLibrary</h1>
       <p>Explore thousands of free books. Search by title, author, ISBN, and more.</p>
-      <div class="search-bar">
+    </div>
+  </section>
+  
+  <!-- Filters Section (Sticky) -->
+  <section class="filters-section">
+    <div class="filters">
+      <div class="filter">
+        <label for="dropdownCategory">Category</label>
+        <div class="dropdown" id="dropdownCategory">
+          <input type="text" class="dropdown-input" placeholder="All" readonly>
+          <div class="dropdown-menu">
+            <input type="text" class="dropdown-search" placeholder="Search...">
+            <ul class="dropdown-options"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="filter">
+        <label for="dropdownAuthor">Author</label>
+        <div class="dropdown" id="dropdownAuthor">
+          <input type="text" class="dropdown-input" placeholder="All" readonly>
+          <div class="dropdown-menu">
+            <input type="text" class="dropdown-search" placeholder="Search...">
+            <ul class="dropdown-options"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="filter">
+        <label for="dropdownDate">Release Date</label>
+        <div class="dropdown" id="dropdownDate">
+          <input type="text" class="dropdown-input" placeholder="All" readonly>
+          <div class="dropdown-menu">
+            <input type="text" class="dropdown-search" placeholder="Search...">
+            <ul class="dropdown-options"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="filter global-search">
+        <label for="searchInput">Search</label>
         <input type="text" id="searchInput" placeholder="Search for books...">
       </div>
     </div>
@@ -39,31 +76,6 @@
   <!-- Main Content -->
   <div class="content-container">
     <section class="main-content">
-      <!-- Sticky, horizontally scrollable Category Navigation -->
-      <div class="categories-nav">
-        <h2>Browse Categories</h2>
-        <ul id="categoryList">
-          <li class="active" data-category="All">All</li>
-          <li data-category="Classic">Classic</li>
-          <li data-category="Loved">Books We Love</li>
-          <li data-category="Trending">Trending</li>
-          <li data-category="Education">Education</li>
-          <li data-category="Romance">Romance</li>
-          <li data-category="Horror">Horror</li>
-          <li data-category="Adventure">Adventure</li>
-          <li data-category="Dystopian">Dystopian</li>
-          <li data-category="Self-Help">Self-Help</li>
-          <li data-category="Historical">Historical</li>
-          <li data-category="Philosophical">Philosophical</li>
-          <li data-category="War">War</li>
-          <li data-category="Drama">Drama</li>
-          <li data-category="Religious">Religious</li>
-          <li data-category="Realism">Realism</li>
-          <li data-category="Tragedy">Tragedy</li>
-          <li data-category="Psychological">Gothic</li>
-        </ul>
-      </div>
-      
       <!-- Container for Carousel Sections -->
       <div id="categoriesContainer"></div>
     </section>
