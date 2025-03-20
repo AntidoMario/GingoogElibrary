@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gingoog CityLibrary - Login / Sign Up</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="logstyle.css">
+</head>
+<body>
+  <div class="auth-container">
+    <!-- LEFT COLUMN: Static Background Image with Overlay -->
+    <div class="image-section">
+      <img src="http://redonline.cdnds.net/main/thumbs/25788/stack_of_books.jpg" alt="Library Image">
+      <div class="overlay">
+        <h2>Welcome to Gingoog eLibrary</h2>
+        <p>“Reading is essential for those who seek to rise above the ordinary.” - Jim Rohn</p>
+      </div>
+    </div>
+    
+    <!-- RIGHT COLUMN: Authentication Card -->
+    <div class="auth-section">
+      <h1 class="brand-title">Gingoog CityLibrary</h1>
+      
+      <div class="toggle-tabs">
+        <button id="loginTab" class="tab active">Sign In</button>
+        <button id="signupTab" class="tab">Sign Up</button>
+      </div>
+      
+      <!-- Login Form -->
+      <form id="loginForm" class="form active">
+        <div class="form-group">
+          <label for="loginEmail">Email or Username</label>
+          <input type="email" id="loginEmail" placeholder="example@domain.com" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="******" required>
+        </div>
+        <button type="submit" class="btn primary-btn">Sign In</button>
+        <p class="switch-link">New here? <a href="#" id="switchToSignup">Create Account</a></p>
+      </form>
+      
+      <!-- Signup Form -->
+      <form id="signupForm" class="form">
+        <div class="form-group">
+          <label for="signupName">Name</label>
+          <input type="text" id="signupName" placeholder="Your Name" required>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="your.email@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="******" required>
+        </div>
+        <div class="form-group">
+          <label for="signupConfirm">Confirm Password</label>
+          <input type="password" id="signupConfirm" placeholder="******" required>
+        </div>
+        <button type="submit" class="btn primary-btn">Sign Up</button>
+        <p class="switch-link">Already have an account? <a href="#" id="switchToLogin">Sign In</a></p>
+      </form>
+    </div>
+  </div>
+  <script src="logscript.js"></script>
+</body>
+</html>
