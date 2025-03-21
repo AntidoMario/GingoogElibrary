@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gingoog CityLibrary - User Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link rel="stylesheet" href="userStyles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="header-inner">
+      <div class="logo">
+        <a href="#">
+          <i class="fas fa-book-open"></i>
+          Gingoog CityLibrary
+        </a>
+      </div>
+      <div class="user-info">
+        <span class="user-name">Hello, John Doe</span>
+        <img class="user-avatar" src="https://via.placeholder.com/40?text=JD" alt="User Avatar">
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout Wrapper: Sidebar + Main Content -->
+  <div class="layout-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Toggle placed at top-left inside the sidebar -->
+      <div class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+        <i class="fas fa-bars"></i>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#" class="active">
+              <i class="fas fa-home"></i>
+              <span>Home</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-book"></i>
+              <span>My Books</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-star"></i>
+              <span>Recommendations</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li>
+            <a href="#">
+              <i class="fas fa-question-circle"></i>
+              <span>Help</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" id="logoutLink">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Log Out</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="content-area">
+      <section class="welcome-section">
+        <h1>Welcome back, John!</h1>
+        <p>Continue exploring thousands of free books, or check out your reading list.</p>
+      </section>
+
+      <!-- Recommended Books Section -->
+      <section class="recommendations">
+        <h2>Recommended for You</h2>
+        <div class="book-grid" id="recommendedBooks">
+          <!-- Sample recommended books injected by JS -->
+        </div>
+      </section>
+
+      <!-- Filters Section (Sticky) -->
+      <section class="filters-section">
+        <div class="filters">
+          <div class="filter">
+            <label for="dropdownCategory">Category</label>
+            <div class="dropdown" id="dropdownCategory">
+              <input type="text" class="dropdown-input" placeholder="All" readonly>
+              <div class="dropdown-menu">
+                <input type="text" class="dropdown-search" placeholder="Search...">
+                <ul class="dropdown-options"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="filter">
+            <label for="dropdownAuthor">Author</label>
+            <div class="dropdown" id="dropdownAuthor">
+              <input type="text" class="dropdown-input" placeholder="All" readonly>
+              <div class="dropdown-menu">
+                <input type="text" class="dropdown-search" placeholder="Search...">
+                <ul class="dropdown-options"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="filter">
+            <label for="dropdownDate">Release Date</label>
+            <div class="dropdown" id="dropdownDate">
+              <input type="text" class="dropdown-input" placeholder="All" readonly>
+              <div class="dropdown-menu">
+                <input type="text" class="dropdown-search" placeholder="Search...">
+                <ul class="dropdown-options"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="filter global-search">
+            <label for="searchInput">Search</label>
+            <input type="text" id="searchInput" placeholder="Search for books...">
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Books Carousel -->
+      <section class="featured-section">
+        <h2>Featured Books</h2>
+        <div class="carousel-container">
+          <button class="carousel-btn left" id="featuredPrevBtn">&#10094;</button>
+          <div class="carousel-wrapper">
+            <div class="carousel" id="featuredCarousel">
+              <!-- Featured book cards injected by JS -->
+            </div>
+          </div>
+          <button class="carousel-btn right" id="featuredNextBtn">&#10095;</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="userScript.js"></script>
+</body>
+</html>
