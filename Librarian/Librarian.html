@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Gingoog CityLibrary Admin</title>
-  <!-- Google Fonts -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gingoog City Library Librarian</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
-  <!-- Font Awesome for icons (optional) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" 
         integrity="sha512-dkyBj...TSECURE..." crossorigin="anonymous" />
   <link rel="stylesheet" href="libstyles.css">
@@ -18,9 +17,8 @@
     <div class="sidebar-inner">
       <div class="sidebar-brand">
         <i class="fas fa-book-open brand-icon"></i>
-        <span class="brand-text">Gingoog CityLibrary</span>
+        <span class="brand-text">Gingoog City Library</span>
       </div>
-      <!-- Circular Toggle Button on right edge -->
       <button id="toggleSidebar" class="toggle-circle">
         <i class="fas fa-chevron-left"></i>
       </button>
@@ -33,15 +31,34 @@
           <i class="fas fa-book"></i>
           <span>Book Management</span>
         </li>
-        <li data-tab="categories">
-          <i class="fas fa-list"></i>
-          <span>Categories</span>
+        <li data-tab="borrowed-books">
+          <i class="fas fa-book-reader"></i>
+          <span>Borrowed Books</span>
         </li>
-        <li data-tab="authors">
-          <i class="fas fa-user-friends"></i>
-          <span>Authors</span>
+        <li data-tab="reports-analytics">
+          <i class="fas fa-chart-bar"></i>
+          <span>Reports</span>
+        </li>
+        <li data-tab="settings">
+          <i class="fas fa-cogs"></i>
+          <span>Settings</span>
+        </li>
+        <li data-tab="messages">
+          <i class="fas fa-envelope"></i>
+          <span>Messages</span>
+        </li>
+        <li data-tab="feedback">
+          <i class="fas fa-comment-dots"></i>
+          <span>Feedback</span>
         </li>
       </ul>
+      <div class="sidebar-footer">
+        <p>&copy; 2023 Gingoog CityLibrary</p>
+      </div>
+      <button class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </button>
     </div>
   </aside>
   
@@ -49,240 +66,452 @@
   <main class="main-content">
     <!-- Dashboard Tab -->
     <div id="dashboard" class="tab-content active">
-      <h1>Dashboard</h1>
+      <h1 class="section-title">Dashboard</h1>
       <div class="dashboard-metrics">
         <div class="metric">
           <label>Total Books:</label>
-          <span id="totalBooks">0</span>
+          <span id="totalBooks">120</span>
         </div>
         <div class="metric">
           <label>Total Categories:</label>
-          <span id="totalCategories">0</span>
+          <span id="totalCategories">15</span>
         </div>
         <div class="metric">
           <label>Total Authors:</label>
-          <span id="totalAuthors">0</span>
+          <span id="totalAuthors">45</span>
         </div>
         <div class="metric">
-          <label>Total Borrowers:</label>
-          <span id="totalBorrowers">0</span>
+          <label>Recent Borrowing Activity:</label>
+          <span id="recentBorrowingActivity">30</span>
         </div>
-        <div class="metric">
-          <label>Total Reservations:</label>
-          <span id="totalReservations">0</span>
+      </div>
+      <div class="recent-activities">
+        <h2 class="section-subtitle">Recent Activities</h2>
+        <ul class="activity-list">
+          <li>
+            <div class="activity-icon">
+              <i class="fas fa-book-reader"></i>
+            </div>
+            <div class="activity-details">
+              <p><strong>John Doe</strong> borrowed <strong>"The Great Gatsby"</strong></p>
+              <span class="activity-time">2 hours ago</span>
+            </div>
+          </li>
+          <li>
+            <div class="activity-icon">
+              <i class="fas fa-plus-circle"></i>
+            </div>
+            <div class="activity-details">
+              <p><strong>"Pride and Prejudice"</strong> was added to the library</p>
+              <span class="activity-time">5 hours ago</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="popular-books">
+        <h2 class="section-subtitle">Most Popular Books</h2>
+        <ul id="popularBooksList">
+          <li>
+            <span class="book-title">Atomic Habits</span>
+            <span class="borrow-count">15 borrows</span>
+          </li>
+          <li>
+            <span class="book-title">Educated</span>
+            <span class="borrow-count">10 borrows</span>
+          </li>
+          <li>
+            <span class="book-title">Where the Crawdads Sing</span>
+            <span class="borrow-count">8 borrows</span>
+          </li>
+        </ul>
+      </div>
+      <div class="shortcuts">
+        <h2 class="section-subtitle">Shortcuts</h2>
+        <div class="shortcut-buttons">
+          <button class="btn-add" id="shortcutAddBook">
+            <i class="fas fa-plus"></i>
+            <span>Add New Book</span>
+          </button>
+          <button class="btn-add" id="shortcutViewBorrowedBooks">
+            <i class="fas fa-book-reader"></i>
+            <span>Manage Borrowed Books</span>
+          </button>
+          <button class="btn-add" id="shortcutReports">
+            <i class="fas fa-chart-bar"></i>
+            <span>View Reports</span>
+          </button>
         </div>
       </div>
     </div>
     
     <!-- Book Management Tab -->
     <div id="book-management" class="tab-content">
-      <h1>Book Management</h1>
-      <div class="book-list-header">
-        <div class="show-entries">
-          <label>Show
-            <select id="entriesSelect">
-              <option value="5">5</option>
-              <option value="10" selected>10</option>
-              <option value="25">25</option>
+      <h1 class="section-title">Book Management</h1>
+      <div class="book-management-header">
+        <div class="filters">
+          <div class="filter">
+            <label for="filterCategory">Category</label>
+            <select id="filterCategory">
+              <option value="all">All</option>
+              <!-- Categories dynamically populated -->
             </select>
-            entries
-          </label>
+          </div>
+          <div class="filter">
+            <label for="filterAuthor">Author</label>
+            <select id="filterAuthor">
+              <option value="all">All</option>
+              <!-- Authors dynamically populated -->
+            </select>
+          </div>
+          <div class="filter">
+            <label for="filterAvailability">Availability</label>
+            <select id="filterAvailability">
+              <option value="all">All</option>
+              <option value="available">Available</option>
+              <option value="borrowed">Borrowed</option>
+            </select>
+          </div>
+          <div class="search-box">
+            <label for="bookSearchInput">Search</label>
+            <input type="text" id="bookSearchInput" placeholder="Search books...">
+          </div>
         </div>
-        <div class="search-box">
-          <label>Search:
-            <input type="text" id="bookSearchInput" placeholder="Type to search...">
-          </label>
-        </div>
-        <button class="btn-add" id="addBookBtn">Add New Book</button>
       </div>
       <div class="table-container new-design">
-        <h3>Book List</h3>
+        <div class="book-list-header">
+          <h3>Book List</h3>
+          <button class="btn-add" id="addBookBtn">Add New Book</button>
+        </div>
         <table>
           <thead>
             <tr>
               <th>No</th>
               <th>Book Image</th>
               <th>Book Name</th>
-              <th>Book Category</th>
-              <th>Book Author</th>
-              <th>Book Description</th>
-              <th>PDF File</th>
+              <th>Category</th>
+              <th>Author</th>
+              <th>Availability</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="bookList">
-            <!-- Rows generated by script.js -->
+            <!-- Rows dynamically generated -->
           </tbody>
         </table>
       </div>
     </div>
-    
-    <!-- Categories Tab -->
-    <div id="categories" class="tab-content">
-      <h1>Categories</h1>
-      <div class="topbar">
-        <div class="search-box">
-          <label>Search:
-            <input type="text" id="categorySearchInput" placeholder="Search categories...">
-          </label>
+
+    <!-- Add New Book Modal -->
+    <div id="bookFormPopup" class="form-popup">
+      <div class="form-popup-content">
+        <button type="button" id="closeBookForm" class="close-btn">&times;</button>
+        <h2>Add New Book</h2>
+        <form id="bookForm" class="horizontal-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookTitle">Book Title</label>
+              <input type="text" id="bookTitle" placeholder="Enter book title" required />
+            </div>
+            <div class="form-group">
+              <label for="bookCover">Upload Book Cover</label>
+              <input type="file" id="bookCover" accept="image/*" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookCategory">Category</label>
+              <div class="custom-dropdown">
+                <select id="bookCategory" class="searchable-dropdown" required>
+                  <option disabled selected>Search category...</option>
+                  <!-- Categories dynamically populated -->
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="bookAuthor">Author</label>
+              <div class="custom-dropdown">
+                <select id="bookAuthor" class="searchable-dropdown" required>
+                  <option disabled selected>Search author...</option>
+                  <!-- Authors dynamically populated -->
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="bookDate">Publication Date</label>
+              <input type="date" id="bookDate" required />
+            </div>
+            <div class="form-group">
+              <label for="bookPDF">Upload PDF</label>
+              <input type="file" id="bookPDF" accept="application/pdf" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full-width">
+              <label for="bookDescription">Description</label>
+              <textarea id="bookDescription" placeholder="Enter book description" required></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-save">Save</button>
+            <button type="button" id="cancelBookBtn" class="btn-cancel">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Borrowed Books Tab -->
+    <div id="borrowed-books" class="tab-content borrowed-books-container">
+      <h1 class="section-title">Borrowed Books Management</h1>
+      <div class="borrowed-books-header">
+        <div class="filters">
+          <div class="filter">
+            <label for="borrowerFilter">Borrower</label>
+            <input type="text" id="borrowerFilter" placeholder="Search by borrower...">
+          </div>
+          <div class="filter">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter">
+              <option value="all">All</option>
+              <option value="borrowed">Borrowed</option>
+              <option value="returned">Returned</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+          <div class="filter">
+            <label for="borrowDateFilter">Borrow Date</label>
+            <input type="date" id="borrowDateFilter" />
+          </div>
+          <button class="btn-filter" id="applyFilters">Apply Filters</button>
         </div>
-        <button class="btn-add" id="addCategoryBtn">Add Category</button>
       </div>
       <div class="table-container new-design">
-        <h3>Categories List</h3>
         <table>
           <thead>
             <tr>
               <th>No</th>
-              <th>Category Name</th>
-              <th>Description</th>
+              <th>Book Name</th>
+              <th>Borrower</th>
+              <th>Borrow Date</th>
+              <th>Due Date</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="categoryListTable">
-            <!-- Rows generated by script.js -->
+          <tbody id="borrowedBooksList">
+            <!-- Rows dynamically generated -->
           </tbody>
         </table>
       </div>
     </div>
-    
-    <!-- Authors Tab -->
-    <div id="authors" class="tab-content">
-      <h1>Authors</h1>
-      <div class="topbar">
-        <div class="search-box">
-          <label>Search:
-            <input type="text" id="authorSearchInput" placeholder="Search authors...">
-          </label>
+
+    <!-- Borrow Details Modal -->
+    <div id="borrowDetailsPopup" class="form-popup" style="display: none;">
+      <div class="form-popup-content">
+        <button type="button" id="closeBorrowDetails" class="close-btn">&times;</button>
+        <h2>Borrow Details</h2>
+        <div id="borrowDetailsContent">
+          <!-- Borrow details dynamically populated -->
         </div>
-        <button class="btn-add" id="addAuthorBtn">Add Author</button>
       </div>
-      <div class="table-container new-design">
-        <h3>Authors List</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Author Name</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="authorListTable">
-            <!-- Rows generated by script.js -->
-          </tbody>
-        </table>
+    </div>
+
+    <!-- Reports & Analytics Tab -->
+    <div id="reports-analytics" class="tab-content">
+      <h1 class="section-title">Reports & Analytics</h1>
+      <div class="reports-tabs">
+        <ul class="reports-nav">
+          <li class="active" data-report="most-borrowed">Most Borrowed Books</li>
+          <li data-report="active-users">Active Users</li>
+          <li data-report="least-demand">Least Demanded Books</li>
+        </ul>
+        <div class="reports-content">
+          <!-- Most Borrowed Books Report -->
+          <div id="most-borrowed" class="report-tab active">
+            <h2 class="report-title">Most Borrowed Books</h2>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Book Name</th>
+                  <th>Borrow Count</th>
+                </tr>
+              </thead>
+              <tbody id="mostBorrowedBooks">
+                <!-- Rows dynamically generated -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Active Users Report -->
+          <div id="active-users" class="report-tab">
+            <h2 class="report-title">Active Users</h2>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>User Name</th>
+                  <th>Borrow Count</th>
+                </tr>
+              </thead>
+              <tbody id="activeUsers">
+                <!-- Rows dynamically generated -->
+              </tbody>
+            </table>
+          </div>
+          <!-- Least Demanded Books Report -->
+          <div id="least-demand" class="report-tab">
+            <h2 class="report-title">Least Demanded Books</h2>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Book Name</th>
+                  <th>Borrow Count</th>
+                </tr>
+              </thead>
+              <tbody id="leastDemandBooks">
+                <!-- Rows dynamically generated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Export Buttons -->
+        <div class="export-section">
+          <button id="exportPDF" class="btn-export">
+            <i class="fas fa-file-pdf"></i> Export as PDF
+          </button>
+          <button id="exportExcel" class="btn-export">
+            <i class="fas fa-file-excel"></i> Export as Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Messages Tab -->
+    <div id="messages" class="tab-content">
+      <h1 class="section-title">Messages</h1>
+      <div class="messages-container">
+        <ul id="messageList">
+          <!-- Messages dynamically populated -->
+        </ul>
+        <form id="messageForm" class="message-form">
+          <textarea id="messageInput" placeholder="Type your message..." required></textarea>
+          <button type="submit" class="btn-send">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Feedback Tab -->
+    <div id="feedback" class="tab-content">
+      <h1 class="section-title">Feedback</h1>
+      <div class="feedback-container">
+        <ul id="feedbackList">
+          <li>
+            <span class="feedback-message">The library is amazing! Keep up the good work.</span>
+            <div class="feedback-actions">
+              <button class="btn-reply" onclick="openReplyModal(0)">Reply</button>
+            </div>
+          </li>
+          <li>
+            <span class="feedback-message">Could you add more books on self-help topics?</span>
+            <div class="feedback-actions">
+              <button class="btn-reply" onclick="openReplyModal(1)">Reply</button>
+            </div>
+          </li>
+          <li>
+            <span class="feedback-message">The borrowing process is smooth and efficient. Thank you!</span>
+            <div class="feedback-actions">
+              <button class="btn-reply" onclick="openReplyModal(2)">Reply</button>
+            </div>
+          </li>
+        </ul>
+        <form id="feedbackForm" class="feedback-form">
+          <textarea id="feedbackInput" placeholder="Write your feedback..." required></textarea>
+          <button type="submit" class="btn-send">Submit</button>
+        </form>
+      </div>
+
+      <!-- Reply Modal -->
+      <div id="replyModal" class="form-popup" style="display: none;">
+        <div class="form-popup-content">
+          <button type="button" id="closeReplyModal" class="close-btn">&times;</button>
+          <h2>Reply to Feedback</h2>
+          <p id="feedbackMessagePreview"></p>
+          <ul id="replyList">
+            <!-- Replies dynamically populated -->
+          </ul>
+          <form id="replyForm" class="message-form">
+            <textarea id="replyInput" placeholder="Type your reply..." required></textarea>
+            <button type="submit" class="btn-send">Send Reply</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings" class="tab-content">
+      <h1 class="section-title">Librarian Settings</h1>
+      <div class="settings-section">
+        <!-- Personal Account Settings -->
+        <div class="settings-group">
+          <h2>Change Password</h2>
+          <form id="changePasswordForm">
+            <div class="form-group">
+              <label for="currentPassword">Current Password:</label>
+              <input type="password" id="currentPassword" placeholder="Enter current password" required>
+            </div>
+            <div class="form-group">
+              <label for="newPassword">New Password:</label>
+              <input type="password" id="newPassword" placeholder="Enter new password" required>
+            </div>
+            <div class="form-group">
+              <label for="confirmPassword">Confirm New Password:</label>
+              <input type="password" id="confirmPassword" placeholder="Confirm new password" required>
+            </div>
+            <button type="submit" class="btn-save">Change Password</button>
+          </form>
+        </div>
+
+        <!-- Notification Preferences -->
+        <div class="settings-group">
+          <h2>Notification Preferences</h2>
+          <form id="notificationPreferencesForm">
+            <div class="form-group">
+              <label for="overdueNotifications">Overdue Notifications:</label>
+              <select id="overdueNotifications">
+                <option value="enabled">Enabled</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="newArrivalsNotifications">New Arrivals Notifications:</label>
+              <select id="newArrivalsNotifications">
+                <option value="enabled">Enabled</option>
+                <option value="disabled">Disabled</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-save">Save Preferences</button>
+          </form>
+        </div>
+
+        <!-- Borrowing Management -->
+        <div class="settings-group">
+          <h2>Borrowing Management</h2>
+          <form id="borrowingManagementForm">
+            <div class="form-group">
+              <label for="borrowingLimit">Borrowing Limit (Books per User):</label>
+              <input type="number" id="borrowingLimit" min="1" placeholder="Enter borrowing limit" required>
+            </div>
+            <button type="submit" class="btn-save">Save Borrowing Limit</button>
+          </form>
+        </div>
       </div>
     </div>
   </main>
 </div>
 
-<!-- Popup Modals -->
-
-<!-- Book Form Popup -->
-<div class="form-popup" id="bookFormPopup">
-  <div class="form-popup-content">
-    <h2 id="formTitle">Add New Book</h2>
-    <form id="bookForm">
-      <input type="hidden" id="bookId">
-      <div class="form-group">
-        <label for="title">Book Name:</label>
-        <input type="text" id="title" required>
-      </div>
-      <div class="form-group">
-        <label for="coverFile">Cover Image:</label>
-        <input type="file" id="coverFile" accept="image/*">
-      </div>
-      <div class="form-group">
-        <label for="pdfFile">PDF File:</label>
-        <input type="file" id="pdfFile" accept="application/pdf">
-      </div>
-      
-      <!-- Custom Dropdown for Book Category with integrated search -->
-      <div class="form-group">
-        <label for="customCategoryDropdown">Book Category:</label>
-        <div class="custom-dropdown" id="customCategoryDropdown">
-          <input type="text" id="categoryDropdownInput" placeholder="Search category...">
-          <div class="dropdown-list" id="categoryDropdownList"></div>
-        </div>
-        <!-- Hidden input to store the selected category -->
-        <input type="hidden" id="categoriesSelect" required>
-      </div>
-      
-      <!-- Custom Dropdown for Book Author with integrated search -->
-      <div class="form-group">
-        <label for="customAuthorDropdown">Book Author:</label>
-        <div class="custom-dropdown" id="customAuthorDropdown">
-          <input type="text" id="authorDropdownInput" placeholder="Search author...">
-          <div class="dropdown-list" id="authorDropdownList"></div>
-        </div>
-        <!-- Hidden input to store the selected author -->
-        <input type="hidden" id="authorSelect" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="description">Book Description:</label>
-        <textarea id="description" rows="3" required></textarea>
-      </div>
-      
-      <!-- Release Date with calendar -->
-      <div class="form-group">
-        <label for="releaseDate">Release Date:</label>
-        <input type="date" id="releaseDate" required>
-      </div>
-      
-      <div class="form-actions">
-        <button type="submit" class="btn-save">Save</button>
-        <button type="button" class="btn-cancel" id="cancelBookBtn">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Category Form Popup -->
-<div class="form-popup" id="categoryFormPopup">
-  <div class="form-popup-content">
-    <h2 id="categoryFormTitle">Add Category</h2>
-    <form id="categoryForm">
-      <input type="hidden" id="categoryId">
-      <div class="form-group">
-        <label for="categoryName">Category Name:</label>
-        <input type="text" id="categoryName" required>
-      </div>
-      <div class="form-group">
-        <label for="categoryDescription">Category Description:</label>
-        <textarea id="categoryDescription" rows="2" required></textarea>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn-save">Save</button>
-        <button type="button" class="btn-cancel" id="cancelCategoryBtn">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Author Form Popup -->
-<div class="form-popup" id="authorFormPopup">
-  <div class="form-popup-content">
-    <h2 id="authorFormTitle">Add Author</h2>
-    <form id="authorForm">
-      <input type="hidden" id="authorId">
-      <div class="form-group">
-        <label for="authorName">Author Name:</label>
-        <input type="text" id="authorName" required>
-      </div>
-      <div class="form-group">
-        <label for="authorDescription">Author Description:</label>
-        <textarea id="authorDescription" rows="2" required></textarea>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn-save">Save</button>
-        <button type="button" class="btn-cancel" id="cancelAuthorBtn">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
-
+<!-- Ensure the script is correctly linked -->
 <script src="libscript.js"></script>
 </body>
 </html>

@@ -8,23 +8,29 @@
 /* Base Styles */
 body {
   font-family: 'Open Sans', sans-serif;
-  background: #faf8f2; /* light tan */
+  background: #faf8f2;
   color: #333;
   min-height: 100vh;
-  overflow-x: hidden; /* prevent horizontal scroll on small screens */
+  overflow-x: hidden;
 }
 
-/* Header */
+/* HEADER (Fixed) */
 .main-header {
-  background: #f2e6d9; /* tan */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px; /* fixed height */
+  background: #f2e6d9;
   border-bottom: 1px solid #d9c9b6;
-  width: 100%;
+  z-index: 1000;
 }
 .header-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
+  height: 60px; /* match header height */
+  padding: 0 20px;
 }
 .header-inner .logo a {
   text-decoration: none;
@@ -52,25 +58,25 @@ body {
   border: 1px solid #d9c9b6;
 }
 
-/* Layout Wrapper */
-.layout-wrapper {
-  display: flex;
-  width: 100%;
-  min-height: calc(100vh - 60px);
-  /* no margin-left so that sidebar is flush left */
-}
-
-/* SIDEBAR */
+/* SIDEBAR (Desktop: fixed left, Mobile: off-canvas drawer) */
 .sidebar {
+  position: fixed;
+  top: 60px;       /* below header */
+  left: 0;
+  bottom: 0;
   width: 240px;
   background: #f2e6d9;
   border-right: 1px solid #d9c9b6;
-  position: relative;
-  transition: width 0.3s ease;
-  flex-shrink: 0;
+  transition: width 0.3s ease, left 0.3s ease;
+  z-index: 999;
 }
 .sidebar.collapsed {
-  width: 60px; /* collapsed width for icons only */
+  width: 60px; /* on large screens, show icons only */
+}
+/* Hide text in logout link & nav when collapsed (desktop) */
+.sidebar.collapsed .sidebar-bottom span,
+.sidebar.collapsed .sidebar-nav a span {
+  display: none;
 }
 
 /* Sidebar Toggle */
@@ -88,7 +94,6 @@ body {
   align-items: center;
   justify-content: center;
   transition: background 0.3s;
-  z-index: 5; /* ensure above nav links */
 }
 .sidebar-toggle:hover {
   background: #dfd2c3;
@@ -98,10 +103,13 @@ body {
   color: #5f4b32;
 }
 
-/* Sidebar Nav */
+/* Sidebar Navigation */
+.sidebar-nav-wrapper {
+  padding: 50px 10px 10px;
+  overflow-y: auto; /* if menu is tall, scroll */
+}
 .sidebar-nav ul {
   list-style: none;
-  padding: 50px 10px 10px 10px; /* top padding to avoid toggle overlap */
 }
 .sidebar-nav li {
   margin-bottom: 10px;
@@ -117,20 +125,6 @@ body {
   padding: 8px 10px;
   border-radius: 4px;
   transition: background 0.3s;
-  white-space: nowrap;
-}
-.sidebar-nav a i {
-  width: 20px;
-  text-align: center;
-  font-size: 18px;
-}
-.sidebar-nav a span {
-  transition: opacity 0.3s, width 0.3s;
-}
-.sidebar.collapsed .sidebar-nav a span {
-  opacity: 0;
-  width: 0;
-  overflow: hidden;
 }
 .sidebar-nav a:hover {
   background: #dfd2c3;
@@ -140,11 +134,44 @@ body {
   color: #fff;
 }
 
+/* Sidebar Bottom (Log Out) */
+.sidebar-bottom {
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  right: 10px;
+}
+.sidebar-bottom a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #5f4b32;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px 10px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+.sidebar-bottom a:hover {
+  background: #dfd2c3;
+}
+
+/* MAIN WRAPPER (Desktop: shift right, Mobile: fill) */
+.layout-wrapper {
+  margin-top: 60px;   /* push below header */
+  margin-left: 240px; /* room for sidebar on desktop */
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 60px);
+}
+.layout-wrapper.collapsed {
+  margin-left: 60px; /* narrower on desktop */
+}
+
 /* MAIN CONTENT */
 .content-area {
-  flex: 1;
   padding: 20px;
-  min-width: 0; /* allow shrinking */
+  width: 100%;
 }
 
 /* Welcome Section */
@@ -199,12 +226,12 @@ body {
   color: #666;
 }
 
-/* Filters Section (Sticky) */
+/* Filters Section (Sticky on large screens) */
 .filters-section {
   position: sticky;
-  top: 0;
+  top: 60px; /* stick below fixed header on desktop */
   background: #fff;
-  z-index: 1000;
+  z-index: 500;
   padding: 10px;
   border-bottom: 1px solid #d9c9b6;
   margin-bottom: 20px;
@@ -351,11 +378,9 @@ body {
 .carousel-btn:hover {
   color: #5f4b32;
 }
-
-/* Book Card in Carousel */
 .carousel .book-card {
   flex: 0 0 auto;
-  display: flex;              /* ensure vertical arrangement of image + button */
+  display: flex;
   flex-direction: column;
   align-items: center;
   width: 140px;
@@ -392,84 +417,77 @@ body {
   color: #333;
 }
 
+/* ---------------------------------- */
 /* RESPONSIVE ADJUSTMENTS */
-@media (max-width: 1000px) {
-  /* Let’s ensure the sidebar can still be toggled without overlap */
+/* ---------------------------------- */
+@media (max-width: 800px) {
+  /*
+    On mobile, we do an "off-canvas" approach for the sidebar.
+    Default: hide it by shifting left: -240px.
+    When we add .open, left: 0 => it's visible.
+  */
   .sidebar {
-    position: fixed; /* pinned on the left */
-    top: 60px;       /* below header */
-    left: 0;
-    bottom: 0;
-    overflow-y: auto;
-    z-index: 999; /* above main content */
+    width: 240px;        /* keep full width on mobile */
+    left: -240px;        /* hide by default off screen */
   }
+  .sidebar.open {
+    left: 0;             /* slide in */
+  }
+
+  /* We no longer do "collapsed" for text-hiding on mobile. So ignore that. */
+  .sidebar.collapsed {
+    /* no effect on mobile if you prefer */
+  }
+  .sidebar.collapsed .sidebar-bottom span,
+  .sidebar.collapsed .sidebar-nav a span {
+    display: inline; /* always show text on mobile */
+  }
+
+  /* The layout wrapper always uses margin-left: 0 on mobile. */
   .layout-wrapper {
-    margin-left: 240px; /* space for the sidebar */
-    transition: margin-left 0.3s;
+    margin-left: 0 !important;
   }
-  .sidebar.collapsed ~ .content-area,
-  .sidebar.collapsed ~ main.content-area,
-  .sidebar.collapsed + main.content-area,
-  .sidebar.collapsed + .layout-wrapper {
-    margin-left: 60px !important;
+  .layout-wrapper.collapsed {
+    margin-left: 0 !important;
   }
-}
-@media (max-width: 850px) {
-  /* Some spacing adjustments for tablets */
+
+  /* The toggle button is crucial on mobile to open/close the drawer. */
+  .sidebar-toggle {
+    top: 10px;
+    left: 10px;
+  }
+
+  /* The rest of the content is normal below the header. */
   .content-area {
     padding: 16px;
   }
-  .filters {
-    gap: 10px;
-  }
+
+  /* If you want the filters to remain sticky on mobile, you can keep it,
+     but it often looks better just as normal flow. */
   .filters-section {
-    padding: 8px;
+    position: static; /* remove sticky if you want simpler mobile flow */
+    margin-bottom: 20px;
   }
 }
-@media (max-width: 800px) {
-  .sidebar {
-    position: static;
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #d9c9b6;
-  }
-  .sidebar.collapsed {
-    width: 100%;
-  }
-  .sidebar-toggle {
-    display: none; /* hide toggle if we don't want it in small screens */
-  }
-  .sidebar-nav ul {
-    display: flex;
-    gap: 10px;
-    padding: 10px;
-    justify-content: center;
-  }
-  .layout-wrapper {
-    margin-left: 0 !important;
-    flex-direction: column;
-  }
-  .content-area {
-    width: 100%;
-  }
-  /* Force icons + text always for small screens */
-  .sidebar.collapsed .sidebar-nav a span {
-    opacity: 1;
-    width: auto;
-    overflow: visible;
-  }
-}
+
 @media (max-width: 600px) {
+  /* Stack header items so they don't overlap */
   .header-inner {
     flex-direction: column;
-    gap: 10px;
+    align-items: flex-start;
+    height: auto;
+    padding: 10px;
   }
   .user-info {
-    margin-top: 5px;
+    margin-top: 10px;
   }
+
+  /* Book grid narrower columns */
   .book-grid {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
+
+  /* Carousel items narrower */
   .carousel .book-card {
     width: 120px;
   }

@@ -1,471 +1,809 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // -----------------------
-  // Tab Switching
-  // -----------------------
-  const navItems = document.querySelectorAll('.nav li');
-  const tabContents = document.querySelectorAll('.tab-content');
-  navItems.forEach(item => {
-    item.addEventListener('click', () => {
-      navItems.forEach(i => i.classList.remove('active'));
-      tabContents.forEach(tab => tab.classList.remove('active'));
-      item.classList.add('active');
-      const tabId = item.getAttribute('data-tab');
-      document.getElementById(tabId).classList.add('active');
-      if (tabId === 'dashboard') updateDashboardMetrics();
-    });
-  });
+document.addEventListener("DOMContentLoaded", function () {
+  // Ensure the DOM is fully loaded before executing scripts
+  console.log("DOM fully loaded and parsed.");
 
   // -----------------------
-  // Dashboard Metrics
+  // Utility Functions for localStorage
   // -----------------------
-  function updateDashboardMetrics() {
-    const books = JSON.parse(localStorage.getItem("myNewDesignBooks")) || [];
-    document.getElementById("totalBooks").textContent = books.length;
-    const categories = JSON.parse(localStorage.getItem("categoriesList")) || [];
-    document.getElementById("totalCategories").textContent = categories.length;
-    const authors = JSON.parse(localStorage.getItem("authorsList")) || [];
-    document.getElementById("totalAuthors").textContent = authors.length;
-    document.getElementById("totalBorrowers").textContent = 42;
-    document.getElementById("totalReservations").textContent = 7;
+  function safeGetItem(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key)) || [];
+    } catch (error) {
+      console.error(`Error reading key "${key}" from localStorage:`, error);
+      return [];
+    }
+  }
+
+  function safeSetItem(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error(`Error writing key "${key}" to localStorage:`, error);
+    }
   }
 
   // -----------------------
-  // Sidebar Toggle
-  // -----------------------
-  const toggleSidebarBtn = document.getElementById('toggleSidebar');
-  const sidebar = document.getElementById('sidebar');
-  toggleSidebarBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-  });
-
-  // -----------------------
-  // Book Management Section
-  // -----------------------
-  const addBookBtn = document.getElementById('addBookBtn');
-  const bookFormPopup = document.getElementById('bookFormPopup');
-  const cancelBookBtn = document.getElementById('cancelBookBtn');
-  const bookForm = document.getElementById('bookForm');
-  const bookListEl = document.getElementById('bookList');
-  const searchInput = document.getElementById('bookSearchInput');
-  const entriesSelect = document.getElementById('entriesSelect');
-
   // LocalStorage Keys
-  const BOOKS_KEY = "myNewDesignBooks";
-  const CATEGORIES_KEY = "categoriesList";
-  const AUTHORS_KEY = "authorsList";
+  // -----------------------
+  const BOOKS_KEY = "books";
+  const CATEGORIES_KEY = "categories";
+  const AUTHORS_KEY = "authors";
+  const BORROWED_BOOKS_KEY = "borrowedBooks";
 
-  // Data arrays
-  let books = JSON.parse(localStorage.getItem(BOOKS_KEY)) || [];
-  let categoriesListStorage = JSON.parse(localStorage.getItem(CATEGORIES_KEY)) || [];
-  let authorsListStorage = JSON.parse(localStorage.getItem(AUTHORS_KEY)) || [];
+  // -----------------------
+  // Sample Data Initialization
+  // -----------------------
+  let books = safeGetItem(BOOKS_KEY);
+  let categories = safeGetItem(CATEGORIES_KEY);
+  let authors = safeGetItem(AUTHORS_KEY);
+  let borrowedBooks = safeGetItem(BORROWED_BOOKS_KEY);
 
   if (books.length === 0) {
     books = [
       {
-        title: "Reading on the Worlds",
-        cover: "",
-        pdf: "",
-        categories: "General Books",
-        author: "Jhone Steben",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        releaseDate: "2021-01-01"
+        title: "Atomic Habits",
+        cover: "https://via.placeholder.com/120x160?text=Atomic+Habits",
+        category: "Self-Help",
+        author: "James Clear",
+        description: "A guide to building good habits and breaking bad ones.",
+        availability: "Available"
       },
       {
-        title: "The Catcher in the Rye",
-        cover: "",
-        pdf: "",
-        categories: "History Books",
-        author: "Fritz Wold",
-        description: "Etiam feugiat luctus est, vel commodo odio.",
-        releaseDate: "1951-07-16"
+        title: "Educated",
+        cover: "https://via.placeholder.com/120x160?text=Educated",
+        category: "Memoir",
+        author: "Tara Westover",
+        description: "A memoir about a girl who escapes her strict upbringing.",
+        availability: "Available"
       },
       {
-        title: "My Lonely Walk",
-        cover: "",
-        pdf: "",
-        categories: "Comic Books",
-        author: "John Klok",
-        description: "Etiam feugiat luctus est, vel commodo odio, in dictum sem.",
-        releaseDate: "2022-05-10"
+        title: "Where the Crawdads Sing",
+        cover: "https://via.placeholder.com/120x160?text=Crawdads",
+        category: "Fiction",
+        author: "Delia Owens",
+        description: "A mystery and coming-of-age story set in the marshes.",
+        availability: "Available"
       }
     ];
-    localStorage.setItem(BOOKS_KEY, JSON.stringify(books));
-  }
-  if (categoriesListStorage.length === 0) {
-    categoriesListStorage = ["General Books", "History Books", "Comic Books", "Classic", "Romance", "Drama"];
-    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categoriesListStorage));
-  }
-  if (authorsListStorage.length === 0) {
-    authorsListStorage = ["Jhone Steben", "Fritz Wold", "John Klok", "Jane Austen", "F. Scott Fitzgerald"];
-    localStorage.setItem(AUTHORS_KEY, JSON.stringify(authorsListStorage));
+    safeSetItem(BOOKS_KEY, books);
   }
 
-  // -----------------------
-  // Custom Dropdowns for Book Form
-  // -----------------------
-  // For Category Dropdown
-  const customCategoryDropdown = document.getElementById('customCategoryDropdown');
-  const categoryDropdownInput = document.getElementById('categoryDropdownInput');
-  const categoryDropdownList = document.getElementById('categoryDropdownList');
-  const categoriesSelectHidden = document.getElementById('categoriesSelect');
-
-  function renderCategoryDropdown(filter = "") {
-    categoryDropdownList.innerHTML = "";
-    const lower = filter.toLowerCase();
-    const filtered = categoriesListStorage.filter(cat => cat.toLowerCase().includes(lower));
-    filtered.forEach(cat => {
-      const div = document.createElement("div");
-      div.textContent = cat;
-      div.addEventListener("click", () => {
-        categoryDropdownInput.value = cat;
-        categoriesSelectHidden.value = cat;
-        customCategoryDropdown.classList.remove("open");
-      });
-      categoryDropdownList.appendChild(div);
-    });
+  if (categories.length === 0) {
+    categories = ["Self-Help", "Memoir", "Fiction", "Classic", "Romance"];
+    safeSetItem(CATEGORIES_KEY, categories);
   }
-  categoryDropdownInput.addEventListener("input", () => {
-    renderCategoryDropdown(categoryDropdownInput.value);
-    customCategoryDropdown.classList.add("open");
-  });
-  categoryDropdownInput.addEventListener("focus", () => {
-    renderCategoryDropdown(categoryDropdownInput.value);
-    customCategoryDropdown.classList.add("open");
-  });
-  document.addEventListener("click", (e) => {
-    if (!customCategoryDropdown.contains(e.target)) {
-      customCategoryDropdown.classList.remove("open");
-    }
-  });
 
-  // For Author Dropdown
-  const customAuthorDropdown = document.getElementById('customAuthorDropdown');
-  const authorDropdownInput = document.getElementById('authorDropdownInput');
-  const authorDropdownList = document.getElementById('authorDropdownList');
-  const authorSelectHidden = document.getElementById('authorSelect');
-
-  function renderAuthorDropdown(filter = "") {
-    authorDropdownList.innerHTML = "";
-    const lower = filter.toLowerCase();
-    const filtered = authorsListStorage.filter(auth => auth.toLowerCase().includes(lower));
-    filtered.forEach(auth => {
-      const div = document.createElement("div");
-      div.textContent = auth;
-      div.addEventListener("click", () => {
-        authorDropdownInput.value = auth;
-        authorSelectHidden.value = auth;
-        customAuthorDropdown.classList.remove("open");
-      });
-      authorDropdownList.appendChild(div);
-    });
+  if (authors.length === 0) {
+    authors = ["James Clear", "Tara Westover", "Delia Owens", "F. Scott Fitzgerald", "Jane Austen"];
+    safeSetItem(AUTHORS_KEY, authors);
   }
-  authorDropdownInput.addEventListener("input", () => {
-    renderAuthorDropdown(authorDropdownInput.value);
-    customAuthorDropdown.classList.add("open");
-  });
-  authorDropdownInput.addEventListener("focus", () => {
-    renderAuthorDropdown(authorDropdownInput.value);
-    customAuthorDropdown.classList.add("open");
-  });
-  document.addEventListener("click", (e) => {
-    if (!customAuthorDropdown.contains(e.target)) {
-      customAuthorDropdown.classList.remove("open");
-    }
-  });
 
-  // -----------------------
-  // Populate Book Form Dropdowns (initially set dropdown input and hidden value)
-  function populateBookFormDropdowns() {
-    // Set initial values (first value in the array)
-    if (categoriesListStorage.length > 0) {
-      categoryDropdownInput.value = categoriesListStorage[0];
-      categoriesSelectHidden.value = categoriesListStorage[0];
-    }
-    if (authorsListStorage.length > 0) {
-      authorDropdownInput.value = authorsListStorage[0];
-      authorSelectHidden.value = authorsListStorage[0];
-    }
-  }
-  populateBookFormDropdowns();
-
-  // -----------------------
-  // Book Form Submission
-  // -----------------------
-  async function addOrUpdateBook(e) {
-    e.preventDefault();
-    
-    const bookId = document.getElementById('bookId').value;
-    const title = document.getElementById('title').value;
-    const coverFileInput = document.getElementById('coverFile');
-    const pdfFileInput = document.getElementById('pdfFile');
-    const categories = categoriesSelectHidden.value;
-    const author = authorSelectHidden.value;
-    const description = document.getElementById('description').value;
-    const releaseDate = document.getElementById('releaseDate').value;
-    
-    const coverData = await handleFileInput(coverFileInput);
-    const pdfData = await handleFileInput(pdfFileInput);
-    
-    const newBook = {
-      title,
-      cover: coverData,
-      pdf: pdfData,
-      categories,
-      author,
-      description,
-      releaseDate
-    };
-
-    if (bookId) {
-      books[bookId] = newBook;
-    } else {
-      books.push(newBook);
-    }
-    
-    localStorage.setItem(BOOKS_KEY, JSON.stringify(books));
-    renderBooks();
-    bookFormPopup.style.display = "none";
-  }
-  bookForm.addEventListener('submit', addOrUpdateBook);
-
-  // Helper: File input to Data URL
-  function handleFileInput(fileInput) {
-    return new Promise((resolve) => {
-      const file = fileInput.files[0];
-      if (!file) {
-        resolve("");
-        return;
+  if (borrowedBooks.length === 0) {
+    borrowedBooks = [
+      {
+        book: "Atomic Habits",
+        borrower: "John Doe",
+        borrowDate: "2023-03-15",
+        dueDate: "2023-04-15",
+        status: "Borrowed"
+      },
+      {
+        book: "Educated",
+        borrower: "Jane Smith",
+        borrowDate: "2023-03-10",
+        dueDate: "2023-04-10",
+        status: "Returned"
+      },
+      {
+        book: "Where the Crawdads Sing",
+        borrower: "Alice Wonder",
+        borrowDate: "2023-03-18",
+        dueDate: "2023-04-18",
+        status: "Overdue"
       }
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.readAsDataURL(file);
-    });
+    ];
+    safeSetItem(BORROWED_BOOKS_KEY, borrowedBooks);
   }
 
-  // Show "Add New Book" Popup
-  addBookBtn.addEventListener('click', () => {
-    bookForm.reset();
-    document.getElementById('bookId').value = "";
-    document.getElementById('formTitle').textContent = "Add New Book";
-    categoryDropdownInput.value = "";
-    authorDropdownInput.value = "";
-    renderCategoryDropdown("");
-    renderAuthorDropdown("");
-    bookFormPopup.style.display = "flex";
-  });
-  cancelBookBtn.addEventListener('click', () => {
-    bookFormPopup.style.display = "none";
-  });
+  // -----------------------
+  // Update Dashboard Metrics
+  // -----------------------
+  document.getElementById("totalBooks").textContent = books.length;
+  document.getElementById("totalCategories").textContent = categories.length;
+  document.getElementById("totalAuthors").textContent = authors.length;
+  document.getElementById("recentBorrowingActivity").textContent = borrowedBooks.length;
 
-  // Render Book Table
+  // -----------------------
+  // Render Book Management Table
+  // -----------------------
   function renderBooks() {
-    const searchText = searchInput.value.toLowerCase().trim();
-    let filtered = books.filter(b =>
-      b.title.toLowerCase().includes(searchText) ||
-      b.author.toLowerCase().includes(searchText) ||
-      b.categories.toLowerCase().includes(searchText) ||
-      b.description.toLowerCase().includes(searchText)
-    );
-    
-    const limit = parseInt(entriesSelect.value, 10) || 10;
-    const displayed = filtered.slice(0, limit);
-    
-    bookListEl.innerHTML = "";
-    displayed.forEach((book, index) => {
+    const bookList = document.getElementById("bookList");
+    bookList.innerHTML = "";
+    books.forEach((book, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${index + 1}</td>
-        <td>
-          ${book.cover
-            ? `<img src="${book.cover}" alt="Cover" class="book-cover-thumb">`
-            : `<span style="color:#aaa;">No Cover</span>`}
-        </td>
+        <td><img src="${book.cover}" alt="${book.title}" class="book-cover-thumb"></td>
         <td>${book.title}</td>
-        <td>${book.categories}</td>
+        <td>${book.category}</td>
         <td>${book.author}</td>
-        <td>${book.description}</td>
-        <td>${book.pdf ? `<a href="${book.pdf}" target="_blank">View PDF</a>` : 'N/A'}</td>
+        <td>${book.availability}</td>
         <td>
-          <button class="action-btn" onclick="editBook(${index})">Edit</button>
-          <button class="action-btn" onclick="deleteBook(${index})">Delete</button>
+          <button class="action-icon" onclick="editBook(${index})">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="action-icon" onclick="markBookUnavailable(${index})">
+            <i class="fas fa-ban"></i>
+          </button>
         </td>
       `;
-      bookListEl.appendChild(row);
+      bookList.appendChild(row);
     });
   }
   renderBooks();
-  searchInput.addEventListener('input', renderBooks);
-  entriesSelect.addEventListener('change', renderBooks);
 
-  window.editBook = function(index) {
-    const book = books[index];
-    document.getElementById('title').value = book.title;
-    document.getElementById('coverFile').value = "";
-    document.getElementById('pdfFile').value = "";
-    // Reset custom dropdowns
-    renderCategoryDropdown("");
-    renderAuthorDropdown("");
-    document.getElementById('categoriesSelect').value = book.categories;
-    document.getElementById('authorSelect').value = book.author;
-    categoryDropdownInput.value = book.categories;
-    authorDropdownInput.value = book.author;
-    document.getElementById('description').value = book.description;
-    document.getElementById('releaseDate').value = book.releaseDate || "";
-    document.getElementById('bookId').value = index;
-    document.getElementById('formTitle').textContent = "Edit Book";
-    bookFormPopup.style.display = "flex";
-  };
+  // -----------------------
+  // Render Borrowed Books Table
+  // -----------------------
+  function renderBorrowedBooks() {
+    const borrowedBooksList = document.getElementById("borrowedBooksList");
+    borrowedBooksList.innerHTML = "";
+    borrowedBooks.forEach((record, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${record.book}</td>
+        <td>${record.borrower}</td>
+        <td>${record.borrowDate}</td>
+        <td>${record.dueDate}</td>
+        <td>${record.status}</td>
+        <td>
+          <button class="action-icon" onclick="viewBorrowDetails(${index})">
+            <i class="fas fa-eye"></i>
+          </button>
+        </td>
+      `;
+      borrowedBooksList.appendChild(row);
+    });
+  }
+  renderBorrowedBooks();
 
-  window.deleteBook = function(index) {
-    if (confirm("Are you sure you want to delete this book?")) {
-      books.splice(index, 1);
-      localStorage.setItem(BOOKS_KEY, JSON.stringify(books));
+  // -----------------------
+  // Render Most Borrowed Books Report
+  // -----------------------
+  function renderMostBorrowedBooks() {
+    const counts = {};
+    borrowedBooks.forEach(record => {
+      counts[record.book] = (counts[record.book] || 0) + 1;
+    });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const mostBorrowedBooks = document.getElementById("mostBorrowedBooks");
+    mostBorrowedBooks.innerHTML = "";
+    sorted.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry[0]}</td>
+        <td>${entry[1]}</td>
+      `;
+      mostBorrowedBooks.appendChild(row);
+    });
+  }
+  renderMostBorrowedBooks();
+
+  // -----------------------
+  // Render Active Users Report
+  // -----------------------
+  function renderActiveUsers() {
+    const userBorrowCounts = {};
+    borrowedBooks.forEach(record => {
+      userBorrowCounts[record.borrower] = (userBorrowCounts[record.borrower] || 0) + 1;
+    });
+
+    const sortedUsers = Object.entries(userBorrowCounts).sort((a, b) => b[1] - a[1]).reverse();
+    const activeUsersTable = document.getElementById("activeUsers");
+    activeUsersTable.innerHTML = "";
+    sortedUsers.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry[0]}</td>
+        <td>${entry[1]}</td>
+      `;
+      activeUsersTable.appendChild(row);
+    });
+  }
+
+  // -----------------------
+  // Render Least Demanded Books Report
+  // -----------------------
+  function renderLeastDemandedBooks() {
+    const bookBorrowCounts = {};
+    borrowedBooks.forEach(record => {
+      bookBorrowCounts[record.book] = (bookBorrowCounts[record.book] || 0) + 1;
+    });
+
+    const sortedBooks = Object.entries(bookBorrowCounts).sort((a, b) => a[1] - b[1]);
+    const leastDemandBooksTable = document.getElementById("leastDemandBooks");
+    leastDemandBooksTable.innerHTML = "";
+    sortedBooks.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry[0]}</td>
+        <td>${entry[1]}</td>
+      `;
+      leastDemandBooksTable.appendChild(row);
+    });
+  }
+
+  // -----------------------
+  // Initialize Reports
+  // -----------------------
+  renderActiveUsers();
+  renderLeastDemandedBooks();
+
+  // -----------------------
+  // Add Book Modal Functionality
+  // -----------------------
+  const addBookBtn = document.getElementById("addBookBtn");
+  const bookFormPopup = document.getElementById("bookFormPopup");
+  const cancelBookBtn = document.getElementById("cancelBookBtn");
+  const closeBookForm = document.getElementById("closeBookForm");
+  const bookForm = document.getElementById("bookForm");
+
+  if (addBookBtn && bookFormPopup) {
+    addBookBtn.addEventListener("click", function () {
+      bookFormPopup.style.display = "flex";
+    });
+  }
+  if (cancelBookBtn || closeBookForm) {
+    [cancelBookBtn, closeBookForm].forEach(btn => {
+      btn.addEventListener("click", function () {
+        bookFormPopup.style.display = "none";
+      });
+    });
+  }
+  if (bookForm) {
+    bookForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      // Get values from form
+      const title = document.getElementById("bookTitle").value;
+      const coverFile = document.getElementById("bookCover").files[0];
+      const category = document.getElementById("bookCategory").value;
+      const author = document.getElementById("bookAuthor").value;
+      const publicationDate = document.getElementById("bookDate").value;
+      const description = document.getElementById("bookDescription").value;
+      const pdfFile = document.getElementById("bookPDF").files[0];
+
+      // Convert the uploaded cover image to a URL
+      let cover = "";
+      if (coverFile) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          cover = e.target.result;
+
+          // Add the new book to the list
+          const newBook = {
+            title,
+            cover,
+            category,
+            author,
+            publicationDate,
+            description,
+            pdf: pdfFile ? pdfFile.name : "No PDF",
+            availability: "Available"
+          };
+          books.push(newBook);
+          safeSetItem(BOOKS_KEY, books);
+          renderBooks();
+          bookFormPopup.style.display = "none";
+          bookForm.reset();
+        };
+        reader.readAsDataURL(coverFile);
+      }
+    });
+  }
+
+  // -----------------------
+  // Populate Category and Author Dropdowns
+  // -----------------------
+  const bookCategoryDropdown = document.getElementById("bookCategory");
+  const bookAuthorDropdown = document.getElementById("bookAuthor");
+
+  function populateDropdown(dropdown, items) {
+    dropdown.innerHTML = ""; // Clear existing options
+    items.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item;
+      option.textContent = item;
+      dropdown.appendChild(option);
+    });
+  }
+
+  populateDropdown(bookCategoryDropdown, categories);
+  populateDropdown(bookAuthorDropdown, authors);
+
+  // Add Searchable Dropdown Functionality
+  document.querySelectorAll(".searchable-dropdown").forEach(dropdown => {
+    dropdown.addEventListener("input", function () {
+      const searchValue = this.value.toLowerCase();
+      Array.from(this.options).forEach(option => {
+        option.style.display = option.textContent.toLowerCase().includes(searchValue) ? "block" : "none";
+      });
+    });
+  });
+
+  // -----------------------
+  // Sidebar Toggle Functionality
+  // -----------------------
+  const sidebarEl = document.getElementById("sidebar");
+  const toggleSidebarBtnEl = document.getElementById("toggleSidebar");
+  if (toggleSidebarBtnEl) {
+    toggleSidebarBtnEl.addEventListener("click", function () {
+      sidebarEl.classList.toggle("collapsed");
+      this.querySelector("i").classList.toggle("fa-chevron-left");
+      this.querySelector("i").classList.toggle("fa-chevron-right");
+
+      // Ensure no horizontal scrolling occurs
+      document.body.style.overflowX = sidebarEl.classList.contains("collapsed") ? "hidden" : "auto";
+
+      // Hide copyright text when sidebar is collapsed
+      const sidebarFooter = document.querySelector(".sidebar-footer");
+      if (sidebarEl.classList.contains("collapsed")) {
+        sidebarFooter.style.display = "none";
+      } else {
+        sidebarFooter.style.display = "block";
+      }
+    });
+  }
+
+  // -----------------------
+  // Tab Switching Functionality
+  // -----------------------
+  const tabs = document.querySelectorAll(".nav li");
+  const tabContents = document.querySelectorAll(".tab-content");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", function () {
+      const target = this.getAttribute("data-tab");
+      tabs.forEach(tab => tab.classList.remove("active"));
+      tabContents.forEach(content => content.classList.remove("active"));
+      this.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  // -----------------------
+  // Logout Functionality
+  // -----------------------
+  const logoutBtn = document.querySelector(".logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function () {
+      alert("Logging out...");
+      window.location.href = "login.html"; // Change this URL to your actual login page if needed.
+    });
+  }
+
+  // -----------------------
+  // Mark Book as Unavailable
+  // -----------------------
+  window.markBookUnavailable = function (index) {
+    if (confirm("Are you sure you want to mark this book as unavailable?")) {
+      books[index].availability = "Unavailable";
+      safeSetItem(BOOKS_KEY, books);
       renderBooks();
     }
   };
 
   // -----------------------
-  // Categories Section
+  // Archive Borrowed Book
   // -----------------------
-  const categorySearchInput = document.getElementById('categorySearchInput');
-  const categoryListTable = document.getElementById('categoryListTable');
-  const addCategoryBtn = document.getElementById('addCategoryBtn');
-  const categoryFormPopup = document.getElementById('categoryFormPopup');
-  const categoryForm = document.getElementById('categoryForm');
-  const cancelCategoryBtn = document.getElementById('cancelCategoryBtn');
-
-  function renderCategories() {
-    const searchText = categorySearchInput.value.toLowerCase().trim();
-    let filtered = categoriesListStorage.filter(cat => cat.toLowerCase().includes(searchText));
-    categoryListTable.innerHTML = "";
-    filtered.forEach((cat, index) => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${cat}</td>
-        <td><span class="cat-desc">${getCategoryDescription(index)}</span></td>
-        <td>
-          <button class="action-btn" onclick="editCategory(${index})">Edit</button>
-          <button class="action-btn" onclick="deleteCategory(${index})">Delete</button>
-        </td>
-      `;
-      categoryListTable.appendChild(row);
-    });
-  }
-  function getCategoryDescription(index) {
-    return "Category description here.";
-  }
-  function saveCategories() {
-    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categoriesListStorage));
-  }
-  addCategoryBtn.addEventListener('click', () => {
-    categoryForm.reset();
-    document.getElementById('categoryId').value = "";
-    document.getElementById('categoryFormTitle').textContent = "Add Category";
-    categoryFormPopup.style.display = "flex";
-  });
-  cancelCategoryBtn.addEventListener('click', () => {
-    categoryFormPopup.style.display = "none";
-  });
-  categoryForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const categoryId = document.getElementById('categoryId').value;
-    const categoryName = document.getElementById('categoryName').value;
-    const categoryDescription = document.getElementById('categoryDescription').value;
-    let newCat = categoryName;
-    if (categoryId) {
-      categoriesListStorage[categoryId] = newCat;
-    } else {
-      categoriesListStorage.push(newCat);
-    }
-    saveCategories();
-    renderCategories();
-    renderCategoryDropdown("");
-    categoryFormPopup.style.display = "none";
-  });
-  if (categorySearchInput) {
-    categorySearchInput.addEventListener('input', renderCategories);
-  }
-  renderCategories();
-
-  window.editCategory = function(index) {
-    document.getElementById('categoryFormTitle').textContent = "Edit Category";
-    document.getElementById('categoryId').value = index;
-    document.getElementById('categoryName').value = categoriesListStorage[index];
-    document.getElementById('categoryDescription').value = "Category description here.";
-    categoryFormPopup.style.display = "flex";
-  };
-
-  window.deleteCategory = function(index) {
-    if (confirm("Are you sure you want to delete this category?")) {
-      categoriesListStorage.splice(index, 1);
-      saveCategories();
-      renderCategories();
-      renderCategoryDropdown("");
+  window.archiveBorrowedBook = function (index) {
+    if (confirm("Are you sure you want to archive this borrowed book record?")) {
+      borrowedBooks[index].status = "Archived";
+      safeSetItem(BORROWED_BOOKS_KEY, borrowedBooks);
+      renderBorrowedBooks();
     }
   };
 
   // -----------------------
-  // Authors Section
+  // Approve Borrow Requests
   // -----------------------
-  const authorSearchInput = document.getElementById('authorSearchInput');
-  const authorListTable = document.getElementById('authorListTable');
-  const addAuthorBtn = document.getElementById('addAuthorBtn');
-  const authorFormPopup = document.getElementById('authorFormPopup');
-  const authorForm = document.getElementById('authorForm');
-  const cancelAuthorBtn = document.getElementById('cancelAuthorBtn');
+  document.getElementById("approveBorrowRequests").addEventListener("click", function () {
+    borrowedBooks.forEach((record) => {
+      if (record.status === "Pending") {
+        record.status = "Borrowed";
+      }
+    });
+    safeSetItem(BORROWED_BOOKS_KEY, borrowedBooks);
+    renderBorrowedBooks();
+    alert("All pending borrow requests have been approved.");
+  });
 
-  function renderAuthors() {
-    const searchText = authorSearchInput.value.toLowerCase().trim();
-    let filtered = authorsListStorage.filter(auth => auth.toLowerCase().includes(searchText));
-    authorListTable.innerHTML = "";
-    filtered.forEach((auth, index) => {
+  // -----------------------
+  // Mark as Returned
+  // -----------------------
+  document.getElementById("markAsReturned").addEventListener("click", function () {
+    borrowedBooks.forEach((record) => {
+      if (record.status === "Borrowed") {
+        record.status = "Returned";
+      }
+    });
+    safeSetItem(BORROWED_BOOKS_KEY, borrowedBooks);
+    renderBorrowedBooks();
+    alert("All borrowed books have been marked as returned.");
+  });
+
+  // -----------------------
+  // Send Late Notifications
+  // -----------------------
+  document.getElementById("sendLateNotifications").addEventListener("click", function () {
+    const today = new Date();
+    const notifications = borrowedBooks.filter((record) => {
+      const dueDate = new Date(record.dueDate);
+      const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+      return record.status === "Borrowed" && daysLeft <= 3; // Notify if due in 3 days or less
+    });
+
+    if (notifications.length > 0) {
+      notifications.forEach((record) => {
+        console.log(`Reminder sent to ${record.borrower} for book: "${record.book}" due on ${record.dueDate}`);
+      });
+      alert("Reminders have been sent for books nearing their due dates.");
+    } else {
+      alert("No books are nearing their due dates.");
+    }
+  });
+
+  // -----------------------
+  // Automatically Handle Due Dates
+  // -----------------------
+  function updateBorrowedBooksStatus() {
+    const today = new Date();
+    borrowedBooks.forEach((record) => {
+      const dueDate = new Date(record.dueDate);
+      if (record.status === "Borrowed" && today > dueDate) {
+        record.status = "Overdue";
+      }
+    });
+    safeSetItem(BORROWED_BOOKS_KEY, borrowedBooks);
+    renderBorrowedBooks();
+  }
+
+  // Call the function to update statuses on page load
+  updateBorrowedBooksStatus();
+
+  // -----------------------
+  // Global Edit and Delete Functions for Books
+  // -----------------------
+  function editBook(index) {
+    alert("Editing book at index: " + index);
+    // Implement edit functionality as needed.
+  }
+
+  function deleteBook(index) {
+    if (confirm("Are you sure you want to delete this book?")) {
+      let books = JSON.parse(localStorage.getItem("books")) || [];
+      books.splice(index, 1);
+      localStorage.setItem("books", JSON.stringify(books));
+      // Refresh the page to update the table (or call renderBooks() if it were globally accessible)
+      location.reload();
+    }
+  }
+
+  // -----------------------
+  // Borrow Details Modal
+  // -----------------------
+  const borrowDetailsPopup = document.getElementById("borrowDetailsPopup");
+  const closeBorrowDetailsBtn = document.getElementById("closeBorrowDetails");
+
+  window.viewBorrowDetails = function (index) {
+    const record = borrowedBooks[index];
+    const borrowDetailsContent = document.getElementById("borrowDetailsContent");
+
+    if (record) {
+      // Populate the modal with borrow details
+      borrowDetailsContent.innerHTML = `
+        <p><strong>Book:</strong> ${record.book}</p>
+        <p><strong>Borrower:</strong> ${record.borrower}</p>
+        <p><strong>Borrow Date:</strong> ${record.borrowDate}</p>
+        <p><strong>Due Date:</strong> ${record.dueDate}</p>
+        <p><strong>Status:</strong> ${record.status}</p>
+      `;
+
+      // Show the modal
+      borrowDetailsPopup.style.display = "flex";
+    } else {
+      console.error("Invalid record index:", index);
+    }
+  };
+
+  // Close the modal when the close button is clicked
+  if (closeBorrowDetailsBtn) {
+    closeBorrowDetailsBtn.addEventListener("click", function () {
+      borrowDetailsPopup.style.display = "none";
+    });
+  }
+
+  // Close the modal when clicking outside the content
+  if (borrowDetailsPopup) {
+    borrowDetailsPopup.addEventListener("click", function (event) {
+      if (event.target === borrowDetailsPopup) {
+        borrowDetailsPopup.style.display = "none";
+      }
+    });
+  }
+
+  // Ensure the borrowedBooks array is correctly passed to renderBorrowedBooks
+  function renderBorrowedBooks() {
+    const borrowedBooksList = document.getElementById("borrowedBooksList");
+    borrowedBooksList.innerHTML = "";
+    borrowedBooks.forEach((record, index) => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${index + 1}</td>
-        <td>${auth}</td>
-        <td><span class="auth-desc">${getAuthorDescription(index)}</span></td>
+        <td>${record.book}</td>
+        <td>${record.borrower}</td>
+        <td>${record.borrowDate}</td>
+        <td>${record.dueDate}</td>
+        <td>${record.status}</td>
         <td>
-          <button class="action-btn" onclick="editAuthor(${index})">Edit</button>
-          <button class="action-btn" onclick="deleteAuthor(${index})">Delete</button>
+          <button class="action-icon" onclick="viewBorrowDetails(${index})">
+            <i class="fas fa-eye"></i>
+          </button>
         </td>
       `;
-      authorListTable.appendChild(row);
+      borrowedBooksList.appendChild(row);
     });
   }
-  function getAuthorDescription(index) {
-    return "Author description here.";
-  }
-  function saveAuthors() {
-    localStorage.setItem(AUTHORS_KEY, JSON.stringify(authorsListStorage));
-  }
-  addAuthorBtn.addEventListener('click', () => {
-    authorForm.reset();
-    document.getElementById('authorId').value = "";
-    document.getElementById('authorFormTitle').textContent = "Add Author";
-    authorFormPopup.style.display = "flex";
+
+  renderBorrowedBooks();
+
+  // -----------------------
+  // Apply Filters for Borrowed Books
+  // -----------------------
+  document.getElementById("applyFilters").addEventListener("click", function () {
+    const borrowerFilter = document.getElementById("borrowerFilter").value.toLowerCase();
+    const statusFilter = document.getElementById("statusFilter").value;
+    const borrowDateFilter = document.getElementById("borrowDateFilter").value;
+
+    const filteredBooks = borrowedBooks.filter((record) => {
+      const matchesBorrower = borrowerFilter === "" || record.borrower.toLowerCase().includes(borrowerFilter);
+      const matchesStatus = statusFilter === "all" || record.status.toLowerCase() === statusFilter;
+      const matchesBorrowDate = !borrowDateFilter || record.borrowDate === borrowDateFilter;
+
+      return matchesBorrower && matchesStatus && matchesBorrowDate;
+    });
+
+    renderFilteredBorrowedBooks(filteredBooks);
   });
-  cancelAuthorBtn.addEventListener('click', () => {
-    authorFormPopup.style.display = "none";
+
+  // -----------------------
+  // Render Filtered Borrowed Books
+  // -----------------------
+  function renderFilteredBorrowedBooks(filteredBooks) {
+    const borrowedBooksList = document.getElementById("borrowedBooksList");
+    borrowedBooksList.innerHTML = "";
+    filteredBooks.forEach((record, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${record.book}</td>
+        <td>${record.borrower}</td>
+        <td>${record.borrowDate}</td>
+        <td>${record.dueDate}</td>
+        <td>${record.status}</td>
+        <td>
+          <button class="action-icon" onclick="viewBorrowDetails(${index})">
+            <i class="fas fa-eye"></i>
+          </button>
+        </td>
+      `;
+      borrowedBooksList.appendChild(row);
+    });
+  }
+
+  // -----------------------
+  // Reports Tab Switching
+  // -----------------------
+  const reportTabs = document.querySelectorAll(".reports-nav li");
+  const reportContents = document.querySelectorAll(".report-tab");
+
+  reportTabs.forEach(tab => {
+    tab.addEventListener("click", function () {
+      const target = this.getAttribute("data-report");
+
+      reportTabs.forEach(tab => tab.classList.remove("active"));
+      reportContents.forEach(content => content.classList.remove("active"));
+
+      this.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
   });
-  authorForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const authorId = document.getElementById('authorId').value;
-    const authorName = document.getElementById('authorName').value;
-    const authorDescription = document.getElementById('authorDescription').value;
-    let newAuth = authorName;
-    if (authorId) {
-      authorsListStorage[authorId] = newAuth;
-    } else {
-      authorsListStorage.push(newAuth);
+
+  // -----------------------
+  // Render Reports
+  // -----------------------
+  function renderMostBorrowedBooks() {
+    const counts = {};
+    borrowedBooks.forEach(record => {
+      counts[record.book] = (counts[record.book] || 0) + 1;
+    });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const mostBorrowedBooks = document.getElementById("mostBorrowedBooks");
+    mostBorrowedBooks.innerHTML = "";
+    sorted.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry[0]}</td>
+        <td>${entry[1]}</td>
+      `;
+      mostBorrowedBooks.appendChild(row);
+    });
+  }
+
+  function renderActiveUsers() {
+    const userBorrowCounts = {};
+    borrowedBooks.forEach(record => {
+      userBorrowCounts[record.borrower] = (userBorrowCounts[record.borrower] || 0) + 1;
+    });
+    const sortedUsers = Object.entries(userBorrowCounts).sort((a, b) => b[1] - a[1]);
+    const activeUsersTable = document.getElementById("activeUsers");
+    activeUsersTable.innerHTML = "";
+    sortedUsers.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry[0]}</td>
+        <td>${entry[1]}</td>
+      `;
+      activeUsersTable.appendChild(row);
+    });
+  }
+
+  function renderLeastDemandedBooks() {
+    const bookBorrowCounts = {};
+    borrowedBooks.forEach(record => {
+      bookBorrowCounts[record.book] = (bookBorrowCounts[record.book] || 0) + 1;
+    });
+    const sortedBooks = Object.entries(bookBorrowCounts).sort((a, b) => a[1] - b[1]);
+    const leastDemandBooksTable = document.getElementById("leastDemandBooks");
+    leastDemandBooksTable.innerHTML = "";
+    sortedBooks.forEach((entry, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${entry[0]}</td>
+        <td>${entry[1]}</td>
+      `;
+      leastDemandBooksTable.appendChild(row);
+    });
+  }
+
+  renderMostBorrowedBooks();
+  renderActiveUsers();
+  renderLeastDemandedBooks();
+
+  // -----------------------
+  // Messages Functionality
+  // -----------------------
+  const messageList = document.getElementById("messageList");
+  const messageForm = document.getElementById("messageForm");
+  const messageInput = document.getElementById("messageInput");
+
+  const MESSAGES_KEY = "messages";
+  let messages = safeGetItem(MESSAGES_KEY);
+
+  function renderMessages() {
+    messageList.innerHTML = "";
+    messages.forEach((message, index) => {
+      const li = document.createElement("li");
+      li.textContent = message;
+      messageList.appendChild(li);
+    });
+  }
+
+  messageForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const message = messageInput.value.trim();
+    if (message) {
+      messages.push(message);
+      safeSetItem(MESSAGES_KEY, messages);
+      renderMessages();
+      messageInput.value = "";
     }
-    saveAuthors();
-    renderAuthors();
-    renderAuthorDropdown("");
-    authorFormPopup.style.display = "none";
   });
-  if (authorSearchInput) {
-    authorSearchInput.addEventListener('input', renderAuthors);
+
+  renderMessages();
+
+  // -----------------------
+  // Feedback Functionality
+  // -----------------------
+  const feedbackList = document.getElementById("feedbackList");
+  const feedbackForm = document.getElementById("feedbackForm");
+  const feedbackInput = document.getElementById("feedbackInput");
+
+  const replyModal = document.getElementById("replyModal");
+  const closeReplyModal = document.getElementById("closeReplyModal");
+  const feedbackMessagePreview = document.getElementById("feedbackMessagePreview");
+  const replyList = document.getElementById("replyList");
+  const replyForm = document.getElementById("replyForm");
+  const replyInput = document.getElementById("replyInput");
+
+  const FEEDBACK_KEY = "feedback";
+  let feedback = safeGetItem(FEEDBACK_KEY);
+
+  // Add sample feedback if none exists
+  if (feedback.length === 0) {
+    feedback = [
+      { message: "The library is amazing! Keep up the good work.", replies: [] },
+      { message: "Could you add more books on self-help topics?", replies: [] },
+      { message: "The borrowing process is smooth and efficient. Thank you!", replies: [] }
+    ];
+    safeSetItem(FEEDBACK_KEY, feedback);
   }
-  renderAuthors();
+
+  function renderFeedback() {
+    feedbackList.innerHTML = "";
+    feedback.forEach((entry, index) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span class="feedback-message">${entry.message}</span>
+        <div class="feedback-actions">
+          <button class="btn-reply" onclick="openReplyModal(${index})">Reply</button>
+        </div>
+      `;
+      feedbackList.appendChild(li);
+    });
+  }
+
+  feedbackForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const feedbackMessage = feedbackInput.value.trim();
+    if (feedbackMessage) {
+      feedback.push({ message: feedbackMessage, replies: [] });
+      safeSetItem(FEEDBACK_KEY, feedback);
+      renderFeedback();
+      feedbackInput.value = "";
+    }
+  });
+
+  window.openReplyModal = function (index) {
+    const selectedFeedback = feedback[index];
+    if (selectedFeedback) {
+      feedbackMessagePreview.textContent = selectedFeedback.message;
+
+      // Populate replies
+      replyList.innerHTML = "";
+      selectedFeedback.replies.forEach(reply => {
+        const replyItem = document.createElement("li");
+        replyItem.textContent = reply;
+        replyList.appendChild(replyItem);
+      });
+
+      replyModal.style.display = "flex";
+
+      replyForm.onsubmit = function (event) {
+        event.preventDefault();
+        const replyMessage = replyInput.value.trim();
+        if (replyMessage) {
+          selectedFeedback.replies.push(replyMessage);
+          safeSetItem(FEEDBACK_KEY, feedback);
+          replyModal.style.display = "none";
+          replyInput.value = "";
+          alert("Reply sent successfully!");
+          renderFeedback(); // Update feedback list
+        }
+      };
+    }
+  };
+
+  if (closeReplyModal) {
+    closeReplyModal.addEventListener("click", function () {
+      replyModal.style.display = "none";
+    });
+  }
+
+  renderFeedback();
 });

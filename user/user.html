@@ -7,10 +7,13 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <!-- Link to your external CSS file -->
   <link rel="stylesheet" href="userStyles.css">
+  <!-- Meta tag for responsive mobile scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header (Fixed at top) -->
   <header class="main-header">
     <div class="header-inner">
       <div class="logo">
@@ -26,14 +29,12 @@
     </div>
   </header>
 
-  <!-- Layout Wrapper: Sidebar + Main Content -->
-  <div class="layout-wrapper">
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-      <!-- Toggle placed at top-left inside the sidebar -->
-      <div class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
-        <i class="fas fa-bars"></i>
-      </div>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" id="sidebarToggle" title="Toggle Sidebar">
+      <i class="fas fa-bars"></i>
+    </div>
+    <div class="sidebar-nav-wrapper">
       <nav class="sidebar-nav">
         <ul>
           <li>
@@ -66,17 +67,19 @@
               <span>Help</span>
             </a>
           </li>
-          <li>
-            <a href="#" id="logoutLink">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Log Out</span>
-            </a>
-          </li>
         </ul>
       </nav>
-    </aside>
+    </div>
+    <div class="sidebar-bottom">
+      <a href="#" id="logoutLink">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Log Out</span>
+      </a>
+    </div>
+  </aside>
 
-    <!-- MAIN CONTENT -->
+  <!-- Main Content Wrapper -->
+  <div class="layout-wrapper" id="layoutWrapper">
     <main class="content-area">
       <section class="welcome-section">
         <h1>Welcome back, John!</h1>
@@ -87,11 +90,11 @@
       <section class="recommendations">
         <h2>Recommended for You</h2>
         <div class="book-grid" id="recommendedBooks">
-          <!-- Sample recommended books injected by JS -->
+          <!-- Recommended books inserted by JS -->
         </div>
       </section>
 
-      <!-- Filters Section (Sticky) -->
+      <!-- Filters Section (Sticky on large screens) -->
       <section class="filters-section">
         <div class="filters">
           <div class="filter">
@@ -138,7 +141,7 @@
           <button class="carousel-btn left" id="featuredPrevBtn">&#10094;</button>
           <div class="carousel-wrapper">
             <div class="carousel" id="featuredCarousel">
-              <!-- Featured book cards injected by JS -->
+              <!-- Featured book cards inserted by JS -->
             </div>
           </div>
           <button class="carousel-btn right" id="featuredNextBtn">&#10095;</button>
@@ -147,6 +150,7 @@
     </main>
   </div>
 
+  <!-- Link to your external JS file -->
   <script src="userScript.js"></script>
 </body>
 </html>
